@@ -10,6 +10,73 @@ module.exports = class extends Generator {
     initializing() {
         this.log(`Let's generate a Node.JS application!`);
         this.props = {};
+        this.pkgs = {
+            defaultPkgs: [
+                'dotenv'
+            ],
+            expPkgs: [
+                'body-parser',
+                'cookie-parser',
+                'cookie-session',
+                'cors',
+                'express',
+                'express-handlebars',
+                'feather-icons',
+                'jsonwebtoken',
+                'jwt-decode',
+                'node-cache',
+                'reflect-metadata',
+                'typeorm',
+            ],
+            restPkgs: [
+                'restify',
+                'jsonwebtoken',
+                'jwt-decode',
+                'node-cache',
+                'reflect-metadata',
+                'typeorm'
+            ],
+            defaultDevPkgs: [
+                '@istanbuljs/nyc-config-typescript',
+                '@types/dotenv',
+                '@types/mocha',
+                '@types/node',
+                '@typescript-eslint/eslint-plugin',
+                '@typescript-eslint/parser',
+                'eslint',
+                'exorcist',
+                'madge',
+                'mocha',
+                'nyc',
+                'rewire',
+                'ts-node',
+                'typeorm-model-generator',
+                'typescript'
+                
+            ],
+            expDevPkgs: [
+                '@types/body-parser',
+                '@types/cookie-parser',
+                '@types/cookie-session',
+                '@types/cors',
+                '@types/express',
+                '@types/express-handlebars',
+                '@types/feather-icons',
+                '@types/jsonwebtoken',
+                '@types/jwt-decode',
+                '@types/node-cache',
+                'browserify',
+                'tsify'
+            ],
+            restDevPkgs: [
+                '@types/restify',
+                '@types/jsonwebtoken',
+                '@types/jwt-decode',
+                '@types/node-cache',
+                'browserify',
+                'tsify'
+            ]
+        };
     }
     async prompting() {
         const props = await this.prompt([{
@@ -36,7 +103,7 @@ module.exports = class extends Generator {
         {
             type: 'list',
             name: 'app',
-            choices: ['package', 'express', 'restify'], //Add express and restify later
+            choices: ['package', 'express web app', 'restify API'],
             message: 'What type of application are you building?'
         }]);
         this.props.name = props.name;
@@ -91,24 +158,23 @@ module.exports = class extends Generator {
     }
     install() {
         this.log('Installing NPM packages. Hang tight. This could take a few minutes.');
-        this.npmInstall([
-            'dotenv'
-        ], { 'save': true });
-        this.npmInstall([
-            '@istanbuljs/nyc-config-typescript',
-            '@types/dotenv',
-            '@types/node',
-            '@typescript-eslint/eslint-plugin',
-            '@typescript-eslint/parser',
-            'eslint',
-            'exorcist',
-            'madge',
-            'mocha',
-            'nyc',
-            'rewire',
-            'ts-node',
-            'typescript'
-        ], { 'save-dev': true });
+        const pkgs = this.pkgs.defaultPkgs;
+        if(this.props.app === 'express web app') {
+            pkgs.push(...this.pkgs.expPkgs);
+        }
+        if(this.props.app === 'restify API') {
+            pkgs.push(...this.pkgs.restPkgs);
+        }
+        this.npmInstall(pkgs, { 'save': true });
+
+        const devPkgs = this.pkgs.defaultDevPkgs;
+        if(this.props.app === 'express web app') {
+            devPkgs.push(...this.pkgs.expDevPkgs);
+        }
+        if(this.props.app === 'restify API') {
+            devPkgs.push(...this.pkgs.restDevPkgs);
+        }
+        this.npmInstall(devPkgs, { 'save-dev': true });
     }
     end() {
         this.log('All done! Happy coding!');
