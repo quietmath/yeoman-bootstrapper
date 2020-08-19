@@ -86,8 +86,18 @@ module.exports = class extends Generator {
         },
         {
             type: 'input',
-            name: 'description',
+            name: 'description', 
             message: 'Please enter a description for your project:'
+        },
+        {
+            type: 'input',
+            name: 'fullname', 
+            message: 'Please enter your name:'
+        },
+        {
+            type: 'input',
+            name: 'email', 
+            message: 'Please enter your email address:'
         },
         {
             type: 'input',
@@ -108,6 +118,8 @@ module.exports = class extends Generator {
         }]);
         this.props.name = props.name;
         this.props.description = props.description;
+        this.props.fullname = props.fullname;
+        this.props.email = props.email;
         this.props.repo = props.repo;
         this.props.stack = props.stack;
         this.props.app = props.app;
@@ -132,6 +144,8 @@ module.exports = class extends Generator {
         pkg.devDependencies = undefined;
         pkg.files = undefined;
         pkg.keywords = undefined;
+        pkg.publishConfig = undefined;
+        pkg.contributors = [ `${ this.props.fullname } <${ this.props.email }>` ];
         if(this.props.repo != null && this.props.repo.trim() != '') {
             pkg.repository = {
                 "type": "git",
